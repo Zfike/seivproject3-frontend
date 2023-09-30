@@ -12,23 +12,23 @@
     "test:open": "cypress open"
   },
   "dependencies": {
-    "@mdi/font": "^7.0.96",
-    "axios": "^1.1.3",
-    "dotenv": "^16.0.3",
-    "eslint": "^8.28.0",
-    "eslint-plugin-vue": "^9.7.0",
-    "vite-plugin-vuetify": "^1.0.0",
-    "vue": "^3.2.47",
-    "vue-router": "^4.1.6",
-    "vuetify": "^3.0.1",
-    "vuex": "^4.0.2",
+    "@mdi/font": "^7.2.96",
+    "axios": "^1.5.1",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.50.0",
+    "eslint-plugin-vue": "^9.17.0",
+    "vite-plugin-vuetify": "^1.0.2",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.5",
+    "vuetify": "^3.3.19",
+    "vuex": "^4.1.0",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
-    "@mdi/js": "^7.0.96",
-    "@vitejs/plugin-vue": "^4.1.0",
+    "@mdi/js": "^7.2.96",
+    "@vitejs/plugin-vue": "^4.3.4",
     "cross-env": "^7.0.3",
-    "cypress": "^12.9.0",
-    "vite": "^4.2.1"
+    "cypress": "^13.2.0",
+    "vite": "^4.4.9"
   }
 }
