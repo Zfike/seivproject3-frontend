@@ -5,7 +5,7 @@ import Utils from "../config/utils";
 import AuthServices from "../services/authServices";
 
 const user = ref(null);
-const title = ref("Tutorials");
+const title = ref("Accommodations");
 const initials = ref("");
 const name = ref("");
 const logoURL = ref("");
