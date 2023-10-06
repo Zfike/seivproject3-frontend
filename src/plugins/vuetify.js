@@ -14,7 +14,7 @@ import "@mdi/font/css/materialdesignicons.css";
 const myCustomLightTheme = {
   dark: false,
   colors: {
-    primary: "#80162B",
+    primary: "#E1F0F8",
     secondary: "#E1E1E1",
     accent: "#47121D",
     success: "#47121D",
