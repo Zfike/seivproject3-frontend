@@ -13,13 +13,13 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
+      path: "/2023/project3/t1/",
       alias: "/login",
       name: "login",
       component: Login,
     },
     {
-      path: "/accommodations",
+      path: "/2023/project3/t1/accommodations",
       name: "accommodations",
       component: AccommodationsList,
     },
