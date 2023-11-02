@@ -1,5 +1,6 @@
 <script setup>
 import AccommodationServices from "../services/accommodationServices";
+import NotificationSender from "../components/NotificationSender.vue";
 import Utils from "../config/utils.js";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -26,6 +27,7 @@ const message = ref("Request for Accommodations");
         <v-card-text>
           <b>{{ message }}</b>
         </v-card-text>
+        <NotificationSender />
       </v-card>
     </v-container>
   </div>
