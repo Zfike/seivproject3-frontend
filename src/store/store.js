@@ -4,8 +4,16 @@ import Utils from "../config/utils";
 // Vue.use(Vuex);
 
 const user = Utils.getStore("user");
-const isFaculty = user && user.email && user.email.endsWith('@oc.edu') && !user.email.endsWith('@eagles.oc.edu');
-const testFacultyEmail = "jaxen.mcray@eagles.oc.edu";
+const testFacultyEmails = [
+  "jaxen.mcray@eagles.oc.edu",
+  "z.fike@eagles.oc.edu"
+];
+
+const isFaculty = user && user.email && (
+  user.email.endsWith('@oc.edu') && 
+  !user.email.endsWith('@eagles.oc.edu') ||
+  testFacultyEmails.includes(user.email) // Check if the email is one of the test emails
+);
 
 const store = createStore({
   state: {
@@ -17,7 +25,12 @@ const store = createStore({
       state.loginUser = user;
       Utils.setStore("user", user);
       // Whenever the loginUser is set, update the isFaculty state as well
-      state.isFaculty = (user.email && user.email.endsWith('@oc.edu') && !user.email.endsWith('@eagles.oc.edu')) || user.email === testFacultyEmail;
+      state.isFaculty = (
+        user.email && 
+        user.email.endsWith('@oc.edu') && 
+        !user.email.endsWith('@eagles.oc.edu') ||
+        testFacultyEmails.includes(user.email)
+      );
     },
   },
   actions: {
