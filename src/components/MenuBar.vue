@@ -11,7 +11,10 @@ const initials = ref("");
 const name = ref("");
 const logoURL = ref("");
 const router = useRouter();
-const testFacultyEmail = "jaxen.mcray@eagles.oc.edu";
+const testFacultyEmails = [
+  "jaxen.mcray@eagles.oc.edu",
+  "z.fike@eagles.oc.edu"
+];
 
 const resetMenu = () => {
   user.value = null;
@@ -26,7 +29,7 @@ const isFaculty = computed(() => {
   return user.value && user.value.email && (
     user.value.email.endsWith('@oc.edu') &&
     !user.value.email.endsWith('@eagles.oc.edu') || 
-    user.value.email === testFacultyEmail
+    testFacultyEmails.includes(user.value.email)
   );
 });
 
