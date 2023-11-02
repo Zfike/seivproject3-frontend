@@ -27,7 +27,11 @@ const logout = () => {
       console.log(response);
       Utils.removeItem("user");
       router.push({ name: "login" }).then(() => {
-        router.go();
+        // Check if the NODE_ENV is development
+        if (process.env.NODE_ENV === 'development') {
+          // This will force the view to reload, it's equivalent to a refresh
+          router.go();
+        }
       });
     })
     .catch((error) => {
