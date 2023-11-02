@@ -4,6 +4,7 @@ import Login from "./views/Login.vue";
 
 import AccommodationsList from "./views/AccommodationsList.vue";
 import AccommodationsRequest from "./views/AccommodationsRequest.vue";
+import FacultyDashboard from "./views/FacultyDashboard.vue";
 // import EditTutorial from "./views/EditTutorial.vue";
 // import AddTutorial from "./views/AddTutorial.vue";
 // import ViewTutorial from "./views/ViewTutorial.vue";
@@ -28,6 +29,11 @@ const router = createRouter({
       path: "/request",
       name: "request",
       component: AccommodationsRequest,
+    },
+    {
+    path: "/facultyDashboard",
+    name: "facultyDashboard",
+    component: FacultyDashboard,
     },
     // {
     //   path: "/edit/:id",
