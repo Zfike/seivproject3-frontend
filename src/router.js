@@ -4,6 +4,7 @@ import Login from "./views/Login.vue";
 
 import AccommodationsList from "./views/AccommodationsList.vue";
 import AccommodationsRequest from "./views/AccommodationsRequest.vue";
+import AccommodationsApproval from "./views/AccommodationsApproval.vue";
 import FacultyDashboard from "./views/FacultyDashboard.vue";
 // import EditTutorial from "./views/EditTutorial.vue";
 // import AddTutorial from "./views/AddTutorial.vue";
@@ -29,6 +30,11 @@ const router = createRouter({
       path: "/request",
       name: "request",
       component: AccommodationsRequest,
+    },
+    {
+      path: "/approval",
+      name: "approval",
+      component: AccommodationsApproval,
     },
     {
     path: "/facultyDashboard",
