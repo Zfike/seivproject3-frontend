@@ -9,26 +9,14 @@ const accommodations = ref([]);
 const user = Utils.getStore("user");
 const message = ref("Search, Edit or Delete Accommodations");
 
-// const editAccommodation = (accommodation) => {
-//   router.push({ name: "edit", params: { id: accommodation.id } });
-// };
 
 // const viewAccommodation = (accommodation) => {
 //   router.push({ name: "view", params: { id: accommodation.id } });
 // };
 
-// const deleteAccommodation = (accommodation) => {
-//   AccommodationServices.delete(accommodation.id)
-//     .then(() => {
-//       retrieveAccommodations();
-//     })
-//     .catch((e) => {
-//       message.value = e.response.data.message;
-//     });
-// };
 
 // const retrieveAccommodations = () => {
-//   AccommodationServices.getAllForUser(user.userId)
+//   userAccommodationServices.getAllForUser(user.userId)
 //     .then((response) => {
 //       accommodations.value = response.data;
 //     })
@@ -37,7 +25,18 @@ const message = ref("Search, Edit or Delete Accommodations");
 //     });
 // };
 
-// retrieveAccommodations();
+
+const retrieveAccommodations = () => {
+  AccommodationServices.getAll()
+    .then((response) => {
+      accommodations.value = response.data;
+    })
+    .catch((e) => {
+      message.value = e.response.data.message;
+    });
+};
+
+retrieveAccommodations();
 </script>
 
 <template>
@@ -54,19 +53,18 @@ const message = ref("Search, Edit or Delete Accommodations");
         <v-card-text>
           <b>{{ message }}</b>
         </v-card-text>
-        <!-- <v-table>
+       <v-table>
           <thead>
             <tr>
               <th class="text-left">Title</th>
               <th class="text-left">Description</th>
-              <th class="text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in accommodations" :key="item.title">
               <td>{{ item.title }}</td>
-              <td>{{ item.description }}</td>
-              <td>
+              <td>{{ item.desc }}</td>
+              <!-- <td>
                 <v-icon small class="mx-4" @click="editAccommodation(item)">
                   mdi-pencil
                 </v-icon>
@@ -76,10 +74,10 @@ const message = ref("Search, Edit or Delete Accommodations");
                 <v-icon small class="mx-4" @click="deleteAccommodation(item)">
                   mdi-trash-can
                 </v-icon>
-              </td>
+              </td> -->
             </tr>
           </tbody>
-        </v-table> -->
+        </v-table>
       </v-card>
     </v-container>
   </div>
