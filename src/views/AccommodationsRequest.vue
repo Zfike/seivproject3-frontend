@@ -7,7 +7,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const accommodations = ref([]);
 const user = Utils.getStore("user");
-const message = ref("Request Accommodations");
+const message = ref("Request for Accommodations");
 
 
 </script>

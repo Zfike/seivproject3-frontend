@@ -63,7 +63,7 @@ onMounted(() => {
       <v-spacer></v-spacer>
       <div v-if="user">
         <v-btn class="mx-2" :to="{ name: 'accommodations' }"> List </v-btn>
-        <v-btn class="mx-2" :to="{ name: 'request' }"> Request Accommodation </v-btn>
+        <v-btn class="mx-2" :to="{ name: 'request' }">  Accommodation Request </v-btn>
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">
         <template v-slot:activator="{ props }">
