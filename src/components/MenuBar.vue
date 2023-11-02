@@ -1,6 +1,6 @@
 <script setup>
 import ocLogo from "/oc-logo-white.png";
-import { ref, onMounted } from "vue";
+import { computed, ref, onMounted } from "vue";
 import Utils from "../config/utils";
 import AuthServices from "../services/authServices";
 import { useRouter } from 'vue-router';
@@ -11,6 +11,7 @@ const initials = ref("");
 const name = ref("");
 const logoURL = ref("");
 const router = useRouter();
+const testFacultyEmail = "jaxen.mcray@eagles.oc.edu";
 
 const resetMenu = () => {
   user.value = null;
@@ -20,6 +21,14 @@ const resetMenu = () => {
     name.value = user.value.fName + " " + user.value.lName;
   }
 };
+
+const isFaculty = computed(() => {
+  return user.value && user.value.email && (
+    user.value.email.endsWith('@oc.edu') &&
+    !user.value.email.endsWith('@eagles.oc.edu') || 
+    user.value.email === testFacultyEmail
+  );
+});
 
 const logout = () => {
   AuthServices.logoutUser(user.value)
@@ -61,9 +70,15 @@ onMounted(() => {
         {{ title }}
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
       <div v-if="user">
-        <v-btn class="mx-2" :to="{ name: 'accommodations' }"> List </v-btn>
-        <v-btn class="mx-2" :to="{ name: 'request' }">  Accommodation Request </v-btn>
+        <!-- Different List button for faculty -->
+        <v-btn class="mx-2" v-if="isFaculty" :to="{ name: 'facultyDashboard' }"> Faculty Dashboard </v-btn>
+        <v-btn class="mx-2" v-else :to="{ name: 'accommodations' }"> List </v-btn>
+        
+        <!-- Different Accommodation button for faculty -->
+        <v-btn class="mx-2" v-if="isFaculty" :to="{ name: 'approval' }">  Accommodation Approval </v-btn>
+        <v-btn class="mx-2" v-else :to="{ name: 'request' }">  Accommodation Request </v-btn>
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">
         <template v-slot:activator="{ props }">
