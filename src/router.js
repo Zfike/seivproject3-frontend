@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
-
 import AccommodationsList from "./views/AccommodationsList.vue";
 import AccommodationsRequest from "./views/AccommodationsRequest.vue";
-import AccommodationsApproval from "./views/AccommodationsApproval.vue";
+import AccommodationsView from "./views/AccommodationsView.vue";
 import FacultyDashboard from "./views/FacultyDashboard.vue";
 // import EditTutorial from "./views/EditTutorial.vue";
 // import AddTutorial from "./views/AddTutorial.vue";
@@ -32,44 +31,16 @@ const router = createRouter({
       component: AccommodationsRequest,
     },
     {
-      path: "/approval",
-      name: "approval",
-      component: AccommodationsApproval,
+      path: "/view/:id",
+      name: "view",
+      component: AccommodationsView,
+      props: true,
     },
     {
     path: "/facultyDashboard",
     name: "facultyDashboard",
     component: FacultyDashboard,
     },
-    // {
-    //   path: "/edit/:id",
-    //   name: "edit",
-    //   component: EditTutorial,
-    //   props: true,
-    // },
-    // {
-    //   path: "/add",
-    //   name: "add",
-    //   component: AddTutorial,
-    // },
-    // {
-    //   path: "/view/:id",
-    //   name: "view",
-    //   component: ViewTutorial,
-    //   props: true,
-    // },
-    // {
-    //   path: "/addLesson/:tutorialId",
-    //   name: "addLesson",
-    //   component: AddLesson,
-    //   props: true,
-    // },
-    // {
-    //   path: "/editLesson/:tutorialId/:lessonId",
-    //   name: "editLesson",
-    //   component: EditLesson,
-    //   props: true,
-    // },
   ],
 });
 
