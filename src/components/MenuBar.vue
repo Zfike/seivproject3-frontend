@@ -57,7 +57,7 @@ onMounted(() => {
 <template>
   <div>
     <v-app-bar app>
-      <router-link :to="{ name: 'accommodations' }">
+      <router-link :to="isFaculty ? { name: 'facultyDashboard' } : { name: 'accommodations' }">
         <v-img
           class="mx-2"
           :src="logoURL"
