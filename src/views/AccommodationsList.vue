@@ -7,7 +7,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const accommodations = ref([]);
 const user = Utils.getStore("user");
-const message = ref("Search, Edit or Delete Accommodations");
+const message = ref("Current Accommodations");
 
 
 // const viewAccommodation = (accommodation) => {
@@ -64,17 +64,6 @@ retrieveAccommodations();
             <tr v-for="(item, index) in accommodations" :key="item.title">
               <td>{{ item.title }}</td>
               <td>{{ item.desc }}</td>
-              <!-- <td>
-                <v-icon small class="mx-4" @click="editAccommodation(item)">
-                  mdi-pencil
-                </v-icon>
-                <v-icon small class="mx-4" @click="viewAccommodation(item)">
-                  mdi-format-list-bulleted-type
-                </v-icon>
-                <v-icon small class="mx-4" @click="deleteAccommodation(item)">
-                  mdi-trash-can
-                </v-icon>
-              </td> -->
             </tr>
           </tbody>
         </v-table>
