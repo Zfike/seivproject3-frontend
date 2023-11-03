@@ -12,7 +12,7 @@ const name = ref("");
 const logoURL = ref("");
 const router = useRouter();
 const testFacultyEmails = [
-  "jaxen.mcray@eagles.oc.edu",
+  "",
   "z.fike@eagles.oc.edu"
 ];
 
@@ -80,8 +80,7 @@ onMounted(() => {
         <v-btn class="mx-2" v-else :to="{ name: 'accommodations' }"> List </v-btn>
         
         <!-- Different Accommodation button for faculty -->
-        <!-- <v-btn class="mx-2" v-if="isFaculty" :to="{ name: 'approval' }">  Accommodation Approval </v-btn> -->
-        <v-btn class="mx-2" v-else :to="{ name: 'request' }">  Accommodation Request </v-btn>
+        <v-btn class="mx-2" :to="{ name: 'request' }">  Accommodation Request </v-btn>
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">
         <template v-slot:activator="{ props }">
