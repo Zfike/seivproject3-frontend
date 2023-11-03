@@ -1,11 +1,11 @@
 <script setup>
-import AccommodationServices from "../services/accommodationServices";
+import UserAccommodationServices from "../services/userAccommodationServices";
 import Utils from "../config/utils.js";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const accommodation = ref({});
+const userAccommodation = ref({});
 const user = Utils.getStore("user");
 const message = ref("View and approve accommodations");
 
@@ -15,10 +15,10 @@ const props = defineProps({
   },
 });
 
-const retrieveAccommodations = () => {
-  AccommodationServices.get(props.id)
+const retrieveUserAccommodations = () => {
+  UserAccommodationServices.get(props.id)
     .then((response) => {
-      accommodation.value = response.data;
+      userAccommodation.value = response.data;
     })
     .catch((e) => {
       message.value = e.response.data.message;
@@ -26,7 +26,7 @@ const retrieveAccommodations = () => {
 };
 
 onMounted(() => {
-  retrieveAccommodations();
+  retrieveUserAccommodations();
 });
 </script>
 
@@ -54,10 +54,10 @@ onMounted(() => {
             </tr>
           </thead>
           <tbody>
-              <td>{{ accommodation.id }}</td>
-              <td>{{ accommodation.title }}</td>
-              <td>{{ accommodation.desc }}</td>
-              <td>{{ accommodation.category }}</td>
+              <td>{{ userAccommodation.id }}</td>
+              <!-- <td>{{ userAccommodation.title }}</td>
+              <td>{{ userAccommodation.desc }}</td>
+              <td>{{ userAccommodation.category }}</td> -->
           </tbody>
         </v-table>
       </v-card>

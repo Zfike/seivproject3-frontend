@@ -2,28 +2,28 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import Utils from "../config/utils.js";
-import AccommodationServices from "../services/accommodationServices";
+import UserAccommodationServices from "../services/userAccommodationServices";
 
 const router = useRouter();
-const accommodations = ref([]);
+const userAccommodations = ref([]);
 const user = Utils.getStore("user");
 const message = ref("Outstanding Accommodations");
 
-const viewAccommodation = (accommodation) => {
-  router.push({ name: "view", params: { id: accommodation.id } });
+const viewUserAccommodation = (userAccommodation) => {
+  router.push({ name: "view", params: { id: userAccommodation.id } });
 };
 
-const retrieveAccommodations = () => {
-  AccommodationServices.getAll()
+const retrieveUserAccommodations = () => {
+  UserAccommodationServices.getAll()
     .then((response) => {
-      accommodations.value = response.data;
+      userAccommodations.value = response.data;
     })
     .catch((e) => {
       message.value = e.response.data.message;
     });
 };
 
-retrieveAccommodations();
+retrieveUserAccommodations();
 </script>
 
 <template>
@@ -47,11 +47,11 @@ retrieveAccommodations();
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in accommodations" :key="item.title">
-              <td>{{ item.title }}</td>
-              <td>{{ item.desc }}</td>
+            <tr v-for="(item, index) in userAccommodations" :key="item.title">
+              <td>{{ item.id }}</td>
+              <td>{{ item.userId }}</td>
               <td>
-                <v-icon small class="mx-4" @click="viewAccommodation(item)">
+                <v-icon small class="mx-4" @click="viewUserAccommodation(item)">
                   mdi-format-list-bulleted-type
                 </v-icon>
               </td>
