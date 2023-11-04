@@ -14,33 +14,17 @@ const message = ref("Current Accommodations");
 //   router.push({ name: "view", params: { id: accommodation.id } });
 // };
 
-
-// const retrieveAccommodations = () => {
-//   userAccommodationServices.getAllForUser(user.userId)
-//     .then((response) => {
-//       accommodations.value = response.data;
-//     })
-//     .catch((e) => {
-//       message.value = e.response.data.message;
-//     });
-// };
-
-
 const retrieveUserAccommodations = () => {
   UserAccommodationServices.getAllForUser(user.userId)
     .then((response) => {
-      // Ensure that userAccommodations.value is always an array
-      userAccommodations.value = Array.isArray(response.data) ? response.data : [response.data];
+      userAccommodations.value = response.data;
     })
     .catch((e) => {
-      message.value = e.response?.data.message || 'An error occurred fetching accommodations.';
-      userAccommodations.value = []; // Ensure it's an empty array in case of error
+      message.value = e.response.data.message;
     });
 };
 
-
 retrieveUserAccommodations();
-// console.log(userAccommodations.value);
 
 </script>
 
@@ -66,7 +50,7 @@ retrieveUserAccommodations();
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in userAccommodations" :key="`item-${item.userId}-${item.accommodationCategoryId}`">
+            <tr v-for="(item, index) in userAccommodations" :key="item.id">
               <td>{{ item.id }}</td>
               <td>{{ item.userId }}</td>
             </tr>
