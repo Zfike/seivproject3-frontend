@@ -1,11 +1,11 @@
 <script setup>
-import AccommodationServices from "../services/accommodationServices";
+import UserAccommodationServices from "../services/userAccommodationServices";
 import Utils from "../config/utils.js";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const accommodations = ref([]);
+const userAccommodations = ref([]);
 const user = Utils.getStore("user");
 const message = ref("Current Accommodations");
 
@@ -26,17 +26,22 @@ const message = ref("Current Accommodations");
 // };
 
 
-const retrieveAccommodations = () => {
-  AccommodationServices.getAll()
+const retrieveUserAccommodations = () => {
+  UserAccommodationServices.getAllForUser(user.userId)
     .then((response) => {
-      accommodations.value = response.data;
+      // Ensure that userAccommodations.value is always an array
+      userAccommodations.value = Array.isArray(response.data) ? response.data : [response.data];
     })
     .catch((e) => {
-      message.value = e.response.data.message;
+      message.value = e.response?.data.message || 'An error occurred fetching accommodations.';
+      userAccommodations.value = []; // Ensure it's an empty array in case of error
     });
 };
 
-retrieveAccommodations();
+
+retrieveUserAccommodations();
+// console.log(userAccommodations.value);
+
 </script>
 
 <template>
@@ -56,14 +61,14 @@ retrieveAccommodations();
        <v-table>
           <thead>
             <tr>
-              <th class="text-left">Title</th>
-              <th class="text-left">Description</th>
+              <th class="text-left">User Accommodation ID</th>
+              <th class="text-left">User ID</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in accommodations" :key="item.title">
-              <td>{{ item.title }}</td>
-              <td>{{ item.desc }}</td>
+            <tr v-for="(item, index) in userAccommodations" :key="`item-${item.userId}-${item.accommodationCategoryId}`">
+              <td>{{ item.id }}</td>
+              <td>{{ item.userId }}</td>
             </tr>
           </tbody>
         </v-table>
