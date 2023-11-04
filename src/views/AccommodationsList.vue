@@ -1,18 +1,13 @@
 <script setup>
 import UserAccommodationServices from "../services/userAccommodationServices";
 import Utils from "../config/utils.js";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 const userAccommodations = ref([]);
 const user = Utils.getStore("user");
 const message = ref("Current Accommodations");
-
-
-// const viewAccommodation = (accommodation) => {
-//   router.push({ name: "view", params: { id: accommodation.id } });
-// };
 
 const retrieveUserAccommodations = () => {
   UserAccommodationServices.getAllForUser(user.userId)
@@ -26,15 +21,22 @@ const retrieveUserAccommodations = () => {
 
 retrieveUserAccommodations();
 
+watchEffect(() => {
+  if (userAccommodations.value.length === 0) {
+    message.value = "You currently have no accommodations. Please request for one.";
+  } else {
+    message.value = "Current Accommodations";
+  }
+});
 </script>
 
 <template>
   <div>
     <v-container>
       <v-toolbar>
-        <v-toolbar-title
-          >Hello, {{ user.fName }} {{ user.lName }}!</v-toolbar-title
-        >
+        <v-toolbar-title>
+          Hello, {{ user.fName }} {{ user.lName }}!
+        </v-toolbar-title>
       </v-toolbar>
       <br /><br />
       <v-card>
@@ -42,7 +44,7 @@ retrieveUserAccommodations();
         <v-card-text>
           <b>{{ message }}</b>
         </v-card-text>
-       <v-table>
+        <v-table v-if="userAccommodations.length > 0">
           <thead>
             <tr>
               <th class="text-left">User Accommodation ID</th>
@@ -56,6 +58,9 @@ retrieveUserAccommodations();
             </tr>
           </tbody>
         </v-table>
+        <div v-else>
+          <!-- This message will show when there are no accommodations -->
+        </div>
       </v-card>
     </v-container>
   </div>
