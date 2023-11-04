@@ -5,12 +5,8 @@ export default {
     return apiClient.get("/userAccommodations");
   },
   getAllForUser(userId) {
-    return apiClient.get("/userAccommodations", {
-      params: {
-        userId: userId
-      }
-    });
-  },  
+    return apiClient.get(`/userAccommodations/${userId}`);
+  }, 
   get(id) {
     return apiClient.get(`/userAccommodations/${id}`);
   },
