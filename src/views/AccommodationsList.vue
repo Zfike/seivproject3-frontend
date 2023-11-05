@@ -15,7 +15,7 @@ const retrieveUserAccommodations = () => {
       userAccommodations.value = response.data;
     })
     .catch((e) => {
-      message.value = e.response.data.message;
+      console.log(response.data.message);
     });
 };
 
