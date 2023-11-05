@@ -52,6 +52,7 @@ onMounted(() => {
             <th class="text-left">Category</th>
             <th class="text-left">User ID</th>
             <th class="text-left">Name</th>
+            <th class="text-left">Description</th>
           </tr>
         </thead>
         <tbody>
@@ -60,6 +61,7 @@ onMounted(() => {
             <td>{{ userAccommodation.accommodationCategory?.categoryName }}</td>
             <td>{{ userAccommodation.userId }}</td>
             <td>{{ userAccommodation.user?.fName }} {{ userAccommodation.user?.lName }}</td>
+            <td>{{ userAccommodation.description }}</td>
           </tr>
         </tbody>
       </v-table>
