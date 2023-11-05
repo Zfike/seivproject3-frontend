@@ -41,13 +41,13 @@ retrieveUserAccommodations();
           <v-table>
           <thead>
             <tr>
-              <th class="text-left">Title</th>
-              <th class="text-left">Description</th>
+              <th class="text-left">ID</th>
+              <th class="text-left">User ID</th>
               <th class="text-left">View</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in userAccommodations" :key="item.title">
+            <tr v-for="(item, index) in userAccommodations" :key="item.id">
               <td>{{ item.id }}</td>
               <td>{{ item.userId }}</td>
               <td>
