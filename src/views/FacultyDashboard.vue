@@ -46,6 +46,7 @@ retrieveUserAccommodations();
               <th class="text-left">Category</th>
               <th class="text-left">User ID</th>
               <th class="text-left">Name</th>
+              <th class="text-left">Status</th>
               <th class="text-left">View</th>
             </tr>
           </thead>
@@ -55,6 +56,7 @@ retrieveUserAccommodations();
               <td>{{ item.accommodationCategory.categoryName }}</td>
               <td>{{ item.userId }}</td>
               <td>{{ item.user.fName }} {{ item.user.lName }}</td>
+              <td>{{ item.status }}</td>
               <td>
                 <v-icon small class="mx-4" @click="viewUserAccommodation(item)">
                   mdi-format-list-bulleted-type
