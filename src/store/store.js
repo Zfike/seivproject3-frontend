@@ -5,9 +5,12 @@ import Utils from "../config/utils";
 
 const user = Utils.getStore("user");
 const testFacultyEmails = [
-  "jaxen.mcray@eagles.oc.edu",
-  ""
+  "",
+  "z.fike@eagles.oc.edu"
 ];
+
+// z.fike@eagles.oc.edu
+// jaxen.mcray@eagles.oc.edu
 
 const isFaculty = user && user.email && (
   user.email.endsWith('@oc.edu') && 

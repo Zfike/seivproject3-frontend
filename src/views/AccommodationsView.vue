@@ -48,7 +48,7 @@ onMounted(() => {
         <v-table>
         <thead>
           <tr>
-            <th class="text-left">ID</th>
+            <th class="text-left">User Accommodation ID</th>
             <th class="text-left">Category</th>
             <th class="text-left">User ID</th>
             <th class="text-left">Name</th>

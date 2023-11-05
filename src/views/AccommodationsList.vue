@@ -48,18 +48,22 @@ watchEffect(() => {
           <thead>
             <tr>
               <th class="text-left">User Accommodation ID</th>
+              <th class="text-left">Category</th>
               <th class="text-left">User ID</th>
+              <th class="text-left">Name</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in userAccommodations" :key="item.id">
               <td>{{ item.id }}</td>
+              <td>{{ item.accommodationCategory?.categoryName }}</td>
               <td>{{ item.userId }}</td>
+              <td>{{ item.user?.fName }} {{ item.user?.lName }}</td>
             </tr>
           </tbody>
         </v-table>
         <div v-else>
-          <!-- This message will show when there are no accommodations -->
+          <!-- This will show when there are no accommodations -->
         </div>
       </v-card>
     </v-container>
