@@ -25,6 +25,7 @@ const retrieveUserAccommodations = () => {
     });
 };
 
+
 onMounted(() => {
   retrieveUserAccommodations();
 });
@@ -45,17 +46,23 @@ onMounted(() => {
           <b>{{ message }}</b>
         </v-card-text>
         <v-table>
-          <thead>
-            <tr>
-              <th class="text-left">ID</th>
-              <th class="text-left">User ID</th>
-            </tr>
-          </thead>
-          <tbody>
-              <td>{{ userAccommodation.id }}</td>
-              <td>{{ userAccommodation.userId }}</td>
-          </tbody>
-        </v-table>
+        <thead>
+          <tr>
+            <th class="text-left">ID</th>
+            <th class="text-left">Category</th>
+            <th class="text-left">User ID</th>
+            <th class="text-left">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ userAccommodation.id }}</td>
+            <td>{{ userAccommodation.accommodationCategory?.categoryName }}</td>
+            <td>{{ userAccommodation.userId }}</td>
+            <td>{{ userAccommodation.user?.fName }} {{ userAccommodation.user?.lName }}</td>
+          </tr>
+        </tbody>
+      </v-table>
       </v-card>
     </v-container>
   </div>
