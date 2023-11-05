@@ -51,6 +51,7 @@ watchEffect(() => {
               <th class="text-left">Category</th>
               <th class="text-left">User ID</th>
               <th class="text-left">Name</th>
+              <th class="text-left">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -59,6 +60,7 @@ watchEffect(() => {
               <td>{{ item.accommodationCategory?.categoryName }}</td>
               <td>{{ item.userId }}</td>
               <td>{{ item.user?.fName }} {{ item.user?.lName }}</td>
+              <td>{{ item.status }}</td>
             </tr>
           </tbody>
         </v-table>
