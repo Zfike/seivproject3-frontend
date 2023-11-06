@@ -7,26 +7,30 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const userAccommodations = ref([]);
 const user = Utils.getStore("user");
-const message = ref("Current Accommodations");
+const message = ref("");
 
 const retrieveUserAccommodations = () => {
   UserAccommodationServices.getAllForUser(user.userId)
     .then((response) => {
-      userAccommodations.value = response.data;
+      if (response.status === 200) {
+        userAccommodations.value = response.data;
+      } else {
+        console.error(`Error retrieving accommodations: ${response.status}`);
+      }
     })
     .catch((e) => {
-      console.log(response.data.message);
+      console.error(e.response?.data?.message || e.message);
+      message.value = "An error occurred while retrieving accommodations.";
+      userAccommodations.value = []; // Ensure it's an empty array if there's an error
     });
 };
 
 retrieveUserAccommodations();
 
 watchEffect(() => {
-  if (userAccommodations.value.length === 0) {
-    message.value = "You currently have no accommodations. Please request for one.";
-  } else {
-    message.value = "Current Accommodations";
-  }
+  message.value = userAccommodations.value.length === 0
+    ? "You currently have no accommodations. Please request for one."
+    : "Current Accommodations";
 });
 </script>
 
