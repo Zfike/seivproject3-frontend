@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import Utils from "../config/utils.js";
 import UserAccommodationServices from "../services/userAccommodationServices";
@@ -7,19 +7,26 @@ import UserAccommodationServices from "../services/userAccommodationServices";
 const router = useRouter();
 const userAccommodations = ref([]);
 const user = Utils.getStore("user");
-const message = ref("Outstanding Accommodations");
+const message = ref("");
 
 const viewUserAccommodation = (userAccommodation) => {
   router.push({ name: "view", params: { id: userAccommodation.id } });
 };
 
+watchEffect(() => {
+  message.value = userAccommodations.value.length === 0
+    ? "There are currently no outstanding accommodations."
+    : "Outstanding Accommodation Requests";
+});
+
 const retrieveUserAccommodations = () => {
   UserAccommodationServices.getAll()
     .then((response) => {
-      userAccommodations.value = response.data;
+      userAccommodations.value = response.data || [];
     })
     .catch((e) => {
-      message.value = e.response.data.message;
+      console.error(e.response?.data?.message || e.message);
+      userAccommodations.value = [];
     });
 };
 

@@ -7,7 +7,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const accommodations = ref([]);
 const user = Utils.getStore("user");
-const message = ref("Current Accommodations");
+const message = ref("");
 
 
 // const viewAccommodation = (accommodation) => {
@@ -29,14 +29,26 @@ const message = ref("Current Accommodations");
 const retrieveAccommodations = () => {
   AccommodationServices.getAll()
     .then((response) => {
-      accommodations.value = response.data;
+      if (response.status === 200) {
+        userAccommodations.value = response.data;
+      } else {
+        console.error(`Error retrieving accommodations: ${response.status}`);
+      }
     })
     .catch((e) => {
-      message.value = e.response.data.message;
+      console.error(e.response?.data?.message || e.message);
+      message.value = "An error occurred while retrieving accommodations.";
+      userAccommodations.value = []; // Ensure it's an empty array if there's an error
     });
 };
 
-retrieveAccommodations();
+retrieveUserAccommodations();
+
+watchEffect(() => {
+  message.value = userAccommodations.value.length === 0
+    ? "You currently have no accommodations. Please request for one."
+    : "Current Accommodations";
+});
 </script>
 
 <template>
