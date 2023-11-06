@@ -5,14 +5,14 @@ export default {
     return apiClient.get("/userAccommodations");
   },
   getAllForUser(userId) {
-    return apiClient.get(`/userAccommodations/user/${userId}`);
-  }, 
+    return apiClient.get("/userAccommodations" + userId);
+  },
   get(id) {
     return apiClient.get(`/userAccommodations/${id}`);
-  },  
+  },
   create(data) {
-    return apiClient.post('/userAccommodations', data);
-  },  
+    return apiClient.post("/userAccommodations", data);
+  },
   update(id, data) {
     return apiClient.put(`/userAccommodations/${id}`, data);
   },

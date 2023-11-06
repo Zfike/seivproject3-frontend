@@ -5,8 +5,8 @@ import Utils from "../config/utils";
 
 const user = Utils.getStore("user");
 const testFacultyEmails = [
-  "",
-  ""
+  "jaxen.mcray@eagles.oc.edu",
+  
 ];
 
 // z.fike@eagles.oc.edu
