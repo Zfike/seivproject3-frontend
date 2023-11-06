@@ -4,7 +4,7 @@
   export default {
     methods: {
       sendEmail() {
-        axios.post('/send-email')
+        axios.post('http://localhost:3021/send-email')
           .then(response => {
             console.log('Email sent successfully');
           })
@@ -19,6 +19,11 @@
 
 <template>
     <div>
-      <button @click="sendEmail">Send Email</button>
+      <v-btn 
+        variant="outlined" 
+        density="comfortable"
+        @click="sendEmail"
+        >Make Request for Accommodations
+      </v-btn>
     </div>
 </template>
