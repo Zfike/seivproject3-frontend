@@ -2,6 +2,7 @@
 import AccommodationCategoryServices from "../services/accommodationCategoryServices";
 import UserAccommodationServices from "../services/userAccommodationServices";
 import Utils from "../config/utils.js";
+import NotificationSender from "../components/NotificationSender.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -12,6 +13,7 @@ const message = ref("Accommodation Types");
 const showDialog = ref(false);
 const currentCategory = ref({});
 const requestDescription = ref("");
+const notificationSender = ref(null);
 
 const retrieveAccommodationCategories = () => {
   AccommodationCategoryServices.getAll()
@@ -23,7 +25,8 @@ const retrieveAccommodationCategories = () => {
     });
 };
 
-const submitRequest = () => {
+const submitRequest = async () => {
+  // Create the accommodation request
   const newRequest = {
     userId: user.userId,
     permission: 1,
@@ -31,15 +34,24 @@ const submitRequest = () => {
     description: requestDescription.value,
   };
 
-  UserAccommodationServices.create(newRequest)
-    .then((response) => {
-      message.value = "Request submitted successfully";
-      showDialog.value = false;
-      requestDescription.value = '';
-    })
-    .catch((e) => {
-      message.value = e.response.data.message || "Failed to submit request";
-    });
+  try {
+    await UserAccommodationServices.create(newRequest);
+    message.value = "Request submitted successfully";
+    showDialog.value = false;
+    // requestDescription.value = "";
+
+    // After successful submission, call the sendEmail method on NotificationSender
+    if (notificationSender.value) {
+      notificationSender.value.sendEmail({
+        subject: 'New Accommodation Request',
+        content: `A new accommodation request has been made: ${requestDescription.value}`
+      });
+    } else {
+      console.error('NotificationSender component not referenced properly.');
+    }
+  } catch (error) {
+    message.value = error.response?.data?.message || "Failed to submit request";
+  }
 };
 
 const openRequestDialog = (category) => {
@@ -108,5 +120,8 @@ retrieveAccommodationCategories();
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <NotificationSender ref="notificationSender" />
+
   </div>
 </template>
