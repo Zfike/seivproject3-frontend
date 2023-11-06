@@ -1,8 +1,8 @@
 <script setup>
 import AccommodationCategoryServices from "../services/accommodationCategoryServices";
-import NotificationSender from "../components/NotificationSender.vue";
 import UserAccommodationServices from "../services/userAccommodationServices";
 import Utils from "../config/utils.js";
+import NotificationSender from "../components/NotificationSender.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -13,6 +13,7 @@ const message = ref("Accommodation Types");
 const showDialog = ref(false);
 const currentCategory = ref({});
 const requestDescription = ref("");
+const notificationSender = ref(null);
 
 const retrieveAccommodationCategories = () => {
   AccommodationCategoryServices.getAll()
@@ -37,10 +38,17 @@ const submitRequest = async () => {
     await UserAccommodationServices.create(newRequest);
     message.value = "Request submitted successfully";
     showDialog.value = false;
-    requestDescription.value = "";
+    // requestDescription.value = "";
 
-    // Call the sendEmail method from the NotificationSender component
-    $refs.notificationSender.sendEmail();
+    // After successful submission, call the sendEmail method on NotificationSender
+    if (notificationSender.value) {
+      notificationSender.value.sendEmail({
+        subject: 'New Accommodation Request',
+        content: `A new accommodation request has been made: ${requestDescription.value}`
+      });
+    } else {
+      console.error('NotificationSender component not referenced properly.');
+    }
   } catch (error) {
     message.value = error.response?.data?.message || "Failed to submit request";
   }
@@ -112,6 +120,8 @@ retrieveAccommodationCategories();
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <NotificationSender ref="notificationSender" />
+
   </div>
 </template>
