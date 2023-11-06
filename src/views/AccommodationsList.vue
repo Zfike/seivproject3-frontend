@@ -1,33 +1,16 @@
 <script setup>
-import AccommodationServices from "../services/accommodationServices";
+import UserAccommodationServices from "../services/userAccommodationServices";
 import Utils from "../config/utils.js";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const accommodations = ref([]);
+const userAccommodations = ref([]);
 const user = Utils.getStore("user");
 const message = ref("");
 
-
-// const viewAccommodation = (accommodation) => {
-//   router.push({ name: "view", params: { id: accommodation.id } });
-// };
-
-
-// const retrieveAccommodations = () => {
-//   userAccommodationServices.getAllForUser(user.userId)
-//     .then((response) => {
-//       accommodations.value = response.data;
-//     })
-//     .catch((e) => {
-//       message.value = e.response.data.message;
-//     });
-// };
-
-
-const retrieveAccommodations = () => {
-  AccommodationServices.getAll()
+const retrieveUserAccommodations = () => {
+  UserAccommodationServices.getAllForUser(user.userId)
     .then((response) => {
       if (response.status === 200) {
         userAccommodations.value = response.data;
@@ -55,9 +38,9 @@ watchEffect(() => {
   <div>
     <v-container>
       <v-toolbar>
-        <v-toolbar-title
-          >Hello, {{ user.fName }} {{ user.lName }}!</v-toolbar-title
-        >
+        <v-toolbar-title>
+          Hello, {{ user.fName }} {{ user.lName }}!
+        </v-toolbar-title>
       </v-toolbar>
       <br /><br />
       <v-card>
@@ -65,20 +48,29 @@ watchEffect(() => {
         <v-card-text>
           <b>{{ message }}</b>
         </v-card-text>
-       <v-table>
+        <v-table v-if="userAccommodations.length > 0">
           <thead>
             <tr>
-              <th class="text-left">Title</th>
-              <th class="text-left">Description</th>
+              <th class="text-left">User Accommodation ID</th>
+              <th class="text-left">Category</th>
+              <th class="text-left">User ID</th>
+              <th class="text-left">Name</th>
+              <th class="text-left">Status</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in accommodations" :key="item.title">
-              <td>{{ item.title }}</td>
-              <td>{{ item.desc }}</td>
+            <tr v-for="(item, index) in userAccommodations" :key="item.id">
+              <td>{{ item.id }}</td>
+              <td>{{ item.accommodationCategory?.categoryName }}</td>
+              <td>{{ item.userId }}</td>
+              <td>{{ item.user?.fName }} {{ item.user?.lName }}</td>
+              <td>{{ item.status }}</td>
             </tr>
           </tbody>
         </v-table>
+        <div v-else>
+          <!-- This will show when there are no accommodations -->
+        </div>
       </v-card>
     </v-container>
   </div>
