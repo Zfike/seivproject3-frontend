@@ -48,15 +48,21 @@ retrieveUserAccommodations();
           <v-table>
           <thead>
             <tr>
-              <th class="text-left">Title</th>
-              <th class="text-left">Description</th>
+              <th class="text-left">ID</th>
+              <th class="text-left">Category</th>
+              <th class="text-left">User ID</th>
+              <th class="text-left">Name</th>
+              <th class="text-left">Status</th>
               <th class="text-left">View</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in userAccommodations" :key="item.title">
+            <tr v-for="(item, index) in userAccommodations" :key="item.id">
               <td>{{ item.id }}</td>
+              <td>{{ item.accommodationCategory.categoryName }}</td>
               <td>{{ item.userId }}</td>
+              <td>{{ item.user.fName }} {{ item.user.lName }}</td>
+              <td>{{ item.status }}</td>
               <td>
                 <v-icon small class="mx-4" @click="viewUserAccommodation(item)">
                   mdi-format-list-bulleted-type
