@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const apiBaseUrl = process.env.NODE_ENV === 'production'
-  ? 'https://project3.eaglesoftwareteam.com/2023/project3/t1' // Production URL
+  ? 'https://project3.eaglesoftwareteam.com/accommodations-t1/' // Production URL
   : 'http://localhost:3021'; // Local URL
 
 export default {
