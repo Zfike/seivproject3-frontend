@@ -48,7 +48,7 @@ const handleCredentialResponse = async (response) => {
       if (store.getters.isAdmin) {
         router.push({ name: 'adminDashboard' });  // Redirect to admin dashboard
       } else {
-        router.push({ name: 'accommodations' });  // Redirect to the existing page for students
+        router.push({ name: 'accommodationsList' });  // Redirect to the existing page for students
       }
     })
     .catch((error) => {

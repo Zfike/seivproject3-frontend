@@ -1,6 +1,6 @@
 <script setup>
 import AccommodationCategoryServices from "../services/accommodationCategoryServices";
-import UserAccommodationServices from "../services/userAccommodationServices";
+import UserAccommodationRequestServices from "../services/userAccommodationRequestServices";
 import Utils from "../config/utils.js";
 import NotificationSender from "../components/NotificationSender.vue";
 import { ref } from "vue";
@@ -9,7 +9,8 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const accommodationCategories = ref([]);
 const user = Utils.getStore("user");
-const message = ref("Accommodation Types");
+const message = ref("");
+const requestMessage = ref("");
 const showDialog = ref(false);
 const currentCategory = ref({});
 const requestDescription = ref("");
@@ -30,13 +31,12 @@ const submitRequest = async () => {
   const newRequest = {
     userId: user.userId,
     permission: 1,
-    accommodationCategoryId: currentCategory.value.id,
     description: requestDescription.value,
   };
 
   try {
-    await UserAccommodationServices.create(newRequest);
-    message.value = "Request submitted successfully";
+    await UserAccommodationRequestServices.create(newRequest);
+    requestMessage.value = "Request submitted successfully";
     showDialog.value = false;
     // requestDescription.value = "";
 
@@ -50,13 +50,8 @@ const submitRequest = async () => {
       console.error('NotificationSender component not referenced properly.');
     }
   } catch (error) {
-    message.value = error.response?.data?.message || "Failed to submit request";
+    requestMessage.value = error.response?.data?.message || "Failed to submit request";
   }
-};
-
-const openRequestDialog = (category) => {
-  currentCategory.value = category;
-  showDialog.value = true;
 };
 
 retrieveAccommodationCategories();
@@ -71,8 +66,9 @@ retrieveAccommodationCategories();
         </v-toolbar-title>
       </v-toolbar>
       <br /><br />
+      <!-- Card for Accommodation Categories -->
       <v-card>
-        <v-card-title>Accommodations Request</v-card-title>
+        <v-card-title>Accommodations Categories</v-card-title>
         <v-card-text>
           <b>{{ message }}</b>
         </v-card-text>
@@ -81,29 +77,23 @@ retrieveAccommodationCategories();
             <tr>
               <th class="text-left">Title</th>
               <th class="text-left">Description</th>
-              <th class="text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(category, index) in accommodationCategories" :key="category.id">
               <td>{{ category.categoryName }}</td>
               <td>{{ category.desc }}</td>
-              <td>
-                <!-- Request button for each category -->
-                <v-btn color="primary" @click="openRequestDialog(category)">
-                  Request
-                </v-btn>
-              </td>
             </tr>
           </tbody>
         </v-table>
       </v-card>
-    </v-container>
-
-    <!-- Dialog for submitting a new accommodation request -->
-    <v-dialog v-model="showDialog" persistent max-width="600px">
-      <v-card>
-        <v-card-title class="headline">Submit Accommodation Request for {{ currentCategory.categoryName }}</v-card-title>
+      <br /><br />
+       <!-- Card for Submitting Request -->
+       <v-card>
+        <v-card-title>Submit Accommodation Request</v-card-title>        
+        <v-card-text>
+          <b>{{ requestMessage }}</b>
+        </v-card-text>
         <v-card-text>
           <v-textarea
             label="Request Description"
@@ -115,11 +105,12 @@ retrieveAccommodationCategories();
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="showDialog = false">Cancel</v-btn>
-          <v-btn color="blue darken-1" text @click="submitRequest">Submit Request</v-btn>
+          <v-btn color="blue darken-1" text @click="submitRequest">
+            Submit Request
+          </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-container>
 
     <NotificationSender ref="notificationSender" />
 

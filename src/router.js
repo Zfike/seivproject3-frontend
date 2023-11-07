@@ -3,7 +3,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import Login from "./views/Login.vue";
 import AccommodationsList from "./views/AccommodationsList.vue";
 import AccommodationsRequest from "./views/AccommodationsRequest.vue";
-import AccommodationsView from "./views/AccommodationsView.vue";
+import AccommodationsRequestList from "./views/AccommodationsRequestList.vue";
+import RequestsView from "./views/RequestsView.vue";
 import AdminDashboard from "./views/AdminDashboard.vue";
 
 const router = createRouter({
@@ -16,9 +17,19 @@ const router = createRouter({
       component: Login,
     },
     {
-      path: "/accommodations",
-      name: "accommodations",
+      path: "/adminDashboard",
+      name: "adminDashboard",
+      component: AdminDashboard,
+    },
+    {
+      path: "/accommodationsList",
+      name: "accommodationsList",
       component: AccommodationsList,
+    },
+    {
+      path: "/requestList",
+      name: "requestList",
+      component: AccommodationsRequestList,
     },
     {
       path: "/request",
@@ -28,13 +39,8 @@ const router = createRouter({
     {
       path: "/view/:id",
       name: "view",
-      component: AccommodationsView,
+      component: RequestsView,
       props: true,
-    },
-    {
-    path: "/adminDashboard",
-    name: "adminDashboard",
-    component: AdminDashboard,
     },
   ],
 });
