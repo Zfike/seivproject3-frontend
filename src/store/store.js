@@ -4,8 +4,8 @@ import Utils from "../config/utils";
 // Vue.use(Vuex);
 
 const user = Utils.getStore("user");
-const testFacultyEmails = [
-  "",
+const testAdminEmails = [
+  "jaxen.mcray@eagles.oc.edu",
   "",
   "",
   ""
@@ -14,27 +14,27 @@ const testFacultyEmails = [
 // z.fike@eagles.oc.edu
 // jaxen.mcray@eagles.oc.edu
 
-const isFaculty = user && user.email && (
+const isAdmin = user && user.email && (
   user.email.endsWith('@oc.edu') && 
   !user.email.endsWith('@eagles.oc.edu') ||
-  testFacultyEmails.includes(user.email) // Check if the email is one of the test emails
+  testAdminEmails.includes(user.email) // Check if the email is one of the test emails
 );
 
 const store = createStore({
   state: {
     loginUser: user,
-    isFaculty: isFaculty,
+    isAdmin: isAdmin,
   },
   mutations: {
     setLoginUser(state, user) {
       state.loginUser = user;
       Utils.setStore("user", user);
-      // Whenever the loginUser is set, update the isFaculty state as well
-      state.isFaculty = (
+      // Whenever the loginUser is set, update the isAdmin state as well
+      state.isAdmin = (
         user.email && 
         user.email.endsWith('@oc.edu') && 
         !user.email.endsWith('@eagles.oc.edu') ||
-        testFacultyEmails.includes(user.email)
+        testAdminEmails.includes(user.email)
       );
     },
   },
@@ -50,9 +50,9 @@ const store = createStore({
     getLoginUserInfo(state) {
       return state.loginUser;
     },
-    isFaculty(state) {
-      // This getter can be used to access the isFaculty state in your Vue components
-      return state.isFaculty;
+    isAdmin(state) {
+      // This getter can be used to access the isAdmin state in your Vue components
+      return state.isAdmin;
     },
   },
 });
