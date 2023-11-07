@@ -4,7 +4,7 @@ import Login from "./views/Login.vue";
 import AccommodationsList from "./views/AccommodationsList.vue";
 import AccommodationsRequest from "./views/AccommodationsRequest.vue";
 import AccommodationsView from "./views/AccommodationsView.vue";
-import FacultyDashboard from "./views/FacultyDashboard.vue";
+import AdminDashboard from "./views/AdminDashboard.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,9 +32,9 @@ const router = createRouter({
       props: true,
     },
     {
-    path: "/facultyDashboard",
-    name: "facultyDashboard",
-    component: FacultyDashboard,
+    path: "/adminDashboard",
+    name: "adminDashboard",
+    component: AdminDashboard,
     },
   ],
 });

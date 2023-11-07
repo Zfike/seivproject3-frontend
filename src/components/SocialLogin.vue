@@ -41,12 +41,12 @@ const handleCredentialResponse = async (response) => {
       fName.value = user.value.fName;
       lName.value = user.value.lName;
       
-      // Set the user in the store, which will also set the isFaculty flag
+      // Set the user in the store, which will also set the isAdmin flag
       store.commit('setLoginUser', user.value);
 
-      // Check if the user is faculty and redirect accordingly
-      if (store.getters.isFaculty) {
-        router.push({ name: 'facultyDashboard' });  // Redirect to faculty dashboard
+      // Check if the user is admin and redirect accordingly
+      if (store.getters.isAdmin) {
+        router.push({ name: 'adminDashboard' });  // Redirect to admin dashboard
       } else {
         router.push({ name: 'accommodations' });  // Redirect to the existing page for students
       }
