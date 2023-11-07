@@ -52,7 +52,7 @@ onMounted(() => {
 <template>
   <div>
     <v-app-bar app>
-      <router-link :to="store.getters.isFaculty ? { name: 'facultyDashboard' } : { name: 'accommodations' }">
+      <router-link :to="store.getters.isAdmin ? { name: 'adminDashboard' } : { name: 'accommodations' }">
         <v-img
           class="mx-2"
           :src="logoURL"
@@ -67,12 +67,13 @@ onMounted(() => {
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <div v-if="user">
-        <!-- Different List button for faculty -->
-        <v-btn class="mx-2" v-if="store.getters.isFaculty" :to="{ name: 'facultyDashboard' }"> Faculty Dashboard </v-btn>
-        <v-btn class="mx-2" v-else :to="{ name: 'accommodations' }"> List </v-btn>
+
+        <!-- Different List button for admin -->
+        <v-btn class="mx-2" v-if="store.getters.isAdmin" :to="{ name: 'adminDashboard' }"> Admin Dashboard </v-btn>
+        <v-btn class="mx-2" v-else :to="{ name: 'accommodationsList' }"> Accommodations </v-btn>
         
-        <!-- Different Accommodation button for faculty -->
-        <v-btn class="mx-2" v-if="!(store.getters.isFaculty)" :to="{ name: 'request' }"> Accommodation Request </v-btn>
+        <!-- Different Accommodation button for admin -->
+        <v-btn class="mx-2" v-if="!(store.getters.isAdmin)" :to="{ name: 'requestList' }"> Requests </v-btn>
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">
         <template v-slot:activator="{ props }">

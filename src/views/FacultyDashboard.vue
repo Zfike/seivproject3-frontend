@@ -2,35 +2,36 @@
 import { ref, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import Utils from "../config/utils.js";
-import UserAccommodationServices from "../services/userAccommodationServices";
+import UserAccommodationRequestServices from "../services/userAccommodationRequestServices";
+
 
 const router = useRouter();
-const userAccommodations = ref([]);
+const userAccommodationRequests = ref([]);
 const user = Utils.getStore("user");
 const message = ref("");
 
-const viewUserAccommodation = (userAccommodation) => {
-  router.push({ name: "view", params: { id: userAccommodation.id } });
+const viewUserAccommodationRequest = (userAccommodationRequest) => {
+  router.push({ name: "view", params: { id: userAccommodationRequest.id } });
 };
 
 watchEffect(() => {
-  message.value = userAccommodations.value.length === 0
-    ? "There are currently no outstanding accommodations."
-    : "Outstanding Accommodation Requests";
+  message.value = userAccommodationRequests.value.length === 0
+    ? "There are currently no active accommodation requests."
+    : "Active Accommodation Requests";
 });
 
-const retrieveUserAccommodations = () => {
-  UserAccommodationServices.getAll()
+const retrieveUserAccommodationRequests = () => {
+  UserAccommodationRequestServices.getAll()
     .then((response) => {
-      userAccommodations.value = response.data || [];
+      userAccommodationRequests.value = response.data || [];
     })
     .catch((e) => {
       console.error(e.response?.data?.message || e.message);
-      userAccommodations.value = [];
+      userAccommodationRequests.value = [];
     });
 };
 
-retrieveUserAccommodations();
+retrieveUserAccommodationRequests();
 </script>
 
 <template>
@@ -48,8 +49,7 @@ retrieveUserAccommodations();
           <v-table>
           <thead>
             <tr>
-              <th class="text-left">ID</th>
-              <th class="text-left">Category</th>
+              <th class="text-left">Request ID</th>
               <th class="text-left">User ID</th>
               <th class="text-left">Name</th>
               <th class="text-left">Status</th>
@@ -57,14 +57,13 @@ retrieveUserAccommodations();
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in userAccommodations" :key="item.id">
+            <tr v-for="(item, index) in userAccommodationRequests" :key="item.id">
               <td>{{ item.id }}</td>
-              <td>{{ item.accommodationCategory.categoryName }}</td>
               <td>{{ item.userId }}</td>
               <td>{{ item.user.fName }} {{ item.user.lName }}</td>
               <td>{{ item.status }}</td>
               <td>
-                <v-icon small class="mx-4" @click="viewUserAccommodation(item)">
+                <v-icon small class="mx-4" @click="viewUserAccommodationRequest(item)">
                   mdi-format-list-bulleted-type
                 </v-icon>
               </td>

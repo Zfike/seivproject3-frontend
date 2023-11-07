@@ -48,7 +48,7 @@ const handleCredentialResponse = async (response) => {
       if (store.getters.isFaculty) {
         router.push({ name: 'facultyDashboard' });  // Redirect to faculty dashboard
       } else {
-        router.push({ name: 'accommodations' });  // Redirect to the existing page for students
+        router.push({ name: 'accommodationsList' });  // Redirect to the existing page for students
       }
     })
     .catch((error) => {
