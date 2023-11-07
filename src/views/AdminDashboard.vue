@@ -42,7 +42,7 @@ retrieveUserAccommodationRequests();
         </v-toolbar>
         <br /><br />
         <v-card>
-          <v-card-title> Faculty Dashboard </v-card-title>
+          <v-card-title> Admin Dashboard </v-card-title>
           <v-card-text>
             <b>{{ message }}</b>
           </v-card-text>
