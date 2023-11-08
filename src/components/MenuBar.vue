@@ -52,7 +52,7 @@ onMounted(() => {
 <template>
   <div>
     <v-app-bar app>
-      <router-link :to="store.getters.isAdmin ? { name: 'adminDashboard' } : { name: 'accommodations' }">
+      <router-link :to="store.getters.isAdmin ? { name: 'adminDashboard' } : { name: 'accommodationsList' }">
         <v-img
           class="mx-2"
           :src="logoURL"
