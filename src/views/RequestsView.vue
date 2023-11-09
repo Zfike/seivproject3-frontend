@@ -83,7 +83,7 @@ const confirmApprove = () => {
   }))
   .then(() => {
     message.value = "All accommodations have been approved.";
-    updateStatus('Approved');
+    updateStatus('approved');
     approveDialog.value = false;
     retrieveUserAccommodationRequests();
   })
@@ -94,7 +94,7 @@ const confirmApprove = () => {
 };
 
 const confirmDecline = () => {
-  updateStatus('Declined');
+  updateStatus('declined');
   declineDialog.value = false;
 };
 
@@ -167,18 +167,7 @@ onMounted(() => {
       </v-card>
     </v-container>
 
-    <!-- Decline Confirmation Dialog -->
-    <v-dialog v-model="declineDialog" persistent max-width="300px">
-      <v-card>
-        <v-card-title class="text-h5">Confirm Decline</v-card-title>
-        <v-card-text>Are you sure you want to decline this accommodation?</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="declineDialog = false">Cancel</v-btn>
-          <v-btn color="red" text @click="confirmDecline">Decline</v-btn>
-        </v-card-actions>
-
-         <!-- Approve Confirmation Dialog -->
+    <!-- Approve Confirmation Dialog -->
     <v-dialog v-model="approveDialog" persistent max-width="300px">
       <v-card>
         <v-card-title class="text-h5">Confirm Approval</v-card-title>
@@ -191,6 +180,16 @@ onMounted(() => {
       </v-card>
     </v-dialog>
 
+    <!-- Decline Confirmation Dialog -->
+    <v-dialog v-model="declineDialog" persistent max-width="300px">
+      <v-card>
+        <v-card-title class="text-h5">Confirm Decline</v-card-title>
+        <v-card-text>Are you sure you want to decline this accommodation?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="declineDialog = false">Cancel</v-btn>
+          <v-btn color="red" text @click="confirmDecline">Decline</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
