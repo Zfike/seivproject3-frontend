@@ -248,7 +248,6 @@ onMounted(() => {
         </v-card-text>
       </v-card>
 
-
       <!-- Approval and Decline Actions -->
       <v-card>
         <v-card-text class="text-center">
