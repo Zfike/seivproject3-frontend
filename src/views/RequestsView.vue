@@ -44,18 +44,20 @@ const retrieveAccommodations = async () => {
   }
 
   try {
-    // Assuming `AccommodationServices.getByCategoryName` is the method to fetch accommodations by category name
-    const response = await AccommodationServices.getByCategoryName(selectedCategory.value);
-     // Include the category ID in the filtered accommodations
-     filteredAccommodations.value = response.data.map(accommodation => {
-      return {
-        ...accommodation,
-        categoryId: accommodation.accommodationCategoryId,
-      };
-    }); 
+    // First, get the category ID by the category name
+    const categoryResponse = await AccommodationCategoryServices.getByCategoryName(selectedCategory.value);
+    const categoryId = categoryResponse.data.length > 0 ? categoryResponse.data[0].id : null;
+
+    if (!categoryId) {
+      throw new Error(`Category with name ${selectedCategory.value} not found.`);
+    }
+
+    // Then, get accommodations by the category ID
+    const accommodationsResponse = await AccommodationServices.getAllByCategoryId(categoryId);
+    filteredAccommodations.value = accommodationsResponse.data;
   } catch (error) {
     console.error(error);
-    message.value = "Failed to load accommodations.";
+    message.value = "Failed to load accommodations for the selected category.";
   }
 };
 
@@ -117,8 +119,8 @@ const confirmApprove = () => {
   Promise.all(selectedAccommodations.value.map(accommodationId => {
     // Find the accommodation by ID to get the corresponding category ID
     const accommodation = filteredAccommodations.value.find(acc => acc.id === accommodationId);
-    if (!accommodation) {
-      throw new Error('Accommodation not found');
+    if (!accommodation || !accommodation.accommodationCategoryId) {
+      throw new Error('Accommodation not found or missing category ID');
     }
     
     // Construct the accommodation data for each selected accommodation
@@ -127,7 +129,7 @@ const confirmApprove = () => {
       userAccommodationRequestId: userAccommodationRequest.value.id,
       description: userAccommodationRequest.value.description,
       permission: userAccommodationRequest.value.permission,
-      accommodationCategoryId: accommodation.categoryId,
+      accommodationCategoryId: accommodation.accommodationCategoryId, // Make sure this is the correct property
       accommodationId: accommodationId,
       // Include any other necessary data here
     };
@@ -247,6 +249,7 @@ onMounted(() => {
           </v-row>
         </v-card-text>
       </v-card>
+
 
       <!-- Approval and Decline Actions -->
       <v-card>

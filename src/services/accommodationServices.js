@@ -22,7 +22,8 @@ export default {
   deleteAll() {
     return apiClient.delete(`/accommodations`);
   },
-  getByCategoryName(categoryName) {
-    return apiClient.get(`/accommodations?categoryName=${categoryName}`);
+  // Fetch all accommodations by accommodationCategoryId
+  getAllByCategoryId(accommodationCategoryId) {
+    return apiClient.get(`/accommodations/category/${accommodationCategoryId}`);
   },
 };
