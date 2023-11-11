@@ -43,9 +43,8 @@ const submitRequest = async () => {
     // After successful submission, call the sendEmail method on NotificationSender
     if (notificationSender.value) {
       notificationSender.value.sendEmail({
-        subject: 'New Accommodation Request',
-        content: `A new accommodation request has been made: ${requestDescription.value}`
-      });
+        to: user.email,
+      }, 'confirm');
     } else {
       console.error('NotificationSender component not referenced properly.');
     }

@@ -2,6 +2,7 @@
 import UserAccommodationRequestServices from "../services/userAccommodationRequestServices";
 import UserAccommodationServices from "../services/userAccommodationServices";
 import AccommodationCategoryServices from "../services/accommodationCategoryServices";
+import NotificationSender from "../components/NotificationSender.vue";
 import Utils from "../config/utils.js";
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -66,6 +67,7 @@ const confirmApprove = () => {
     message.value = "No accommodation categories selected.";
     return;
   }
+  
 
   // Wrap the creation of user accommodations in a Promise.all to handle them concurrently
   Promise.all(selectedCategories.value.map(categoryId => {
@@ -82,6 +84,15 @@ const confirmApprove = () => {
     return UserAccommodationServices.create(accommodationData);
   }))
   .then(() => {
+    if (notificationSender.value) {
+      notificationSender.value.sendEmail({
+        from: user.email,
+        to: userAccommodationRequest.userId.email,
+      }, 'approve');
+    } else {
+      console.error('NotificationSender component not referenced properly.');
+    }
+
     message.value = "All accommodations have been approved.";
     updateStatus('approved');
     approveDialog.value = false;
