@@ -7,12 +7,13 @@ const apiBaseUrl = process.env.NODE_ENV === 'production'
 
 export default {
   methods: {
-    async sendEmail(emailDetails) {
+    async sendEmail(emailDetails, type) {
       try {
-        const response = await axios.post(`${apiBaseUrl}/send-email`, emailDetails);
+        // console.log('Email details:', emailDetails)
+        const response = await axios.post(`${apiBaseUrl}/accommodations-t1/sendEmail/${type}`, emailDetails);
         console.log('Email sent successfully:', response.data);
       } catch (error) {
-        console.error('Email could not be sent:', error);
+        console.error('Email could not be sent from frontend:', error);
       }
     }
   }
@@ -20,5 +21,5 @@ export default {
 </script>
 
 <template>
-  <!-- This component might be invisible and just serves as an email sender -->
+  
 </template>

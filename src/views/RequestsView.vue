@@ -3,6 +3,7 @@ import UserAccommodationRequestServices from "../services/userAccommodationReque
 import UserAccommodationServices from "../services/userAccommodationServices";
 import AccommodationCategoryServices from "../services/accommodationCategoryServices";
 import AccommodationServices from "../services/accommodationServices";
+import NotificationSender from "../components/NotificationSender.vue";
 import Utils from "../config/utils.js";
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -14,11 +15,13 @@ const accommodations = ref([]);
 const filteredAccommodations = ref([]);
 const selectedAccommodations = ref([]);
 const selectedCategory = ref(null);
+const notificationSender = ref(null);
 const user = Utils.getStore("user");
 const message = ref("View and approve accommodations");
 const dialogMessage = ref("Are you sure you want to proceed with the approval of the selected accommodation(s)?");
 const approveDialog = ref(false);
 const declineDialog = ref(false);
+
 
 const props = defineProps({
   id: {
@@ -114,6 +117,7 @@ const confirmApprove = () => {
     dialogMessage.value = "No accommodations have been selected for approval.";
     return;
   }
+  
 
   // Wrap the creation of user accommodations in a Promise.all to handle them concurrently
   Promise.all(selectedAccommodations.value.map(accommodationId => {
@@ -146,6 +150,17 @@ const confirmApprove = () => {
     message.value = "The accommodation request has been approved and accommodations have been created.";
     approveDialog.value = false;
     selectedAccommodations.value = []; // Clear the selected accommodations
+    
+    //Send approval email
+    if (notificationSender.value) {
+      notificationSender.value.sendEmail({
+        from: user.email,
+        to: userAccommodationRequest.value.user?.email,
+      }, 'approve');
+    } else {
+      console.error('NotificationSender component not referenced properly.');
+    }
+
     retrieveUserAccommodationRequests(); // Refresh the request data
   })
   .catch((error) => {
@@ -160,6 +175,16 @@ const confirmDecline = () => {
       // After updating the status, close the dialog and clear any potentially selected accommodations
       declineDialog.value = false;
       selectedAccommodations.value = [];
+
+      //Send denial email
+      if (notificationSender.value) {
+        notificationSender.value.sendEmail({
+          from: user.email,
+          to: userAccommodationRequest.value.user?.email,
+        }, 'deny');
+      } else {
+        console.error('NotificationSender component not referenced properly.');
+      }
     })
     .catch((error) => {
       // Handle any errors here
@@ -178,6 +203,7 @@ watch(selectedCategory, (newCategory) => {
 onMounted(() => {
   retrieveUserAccommodationRequests();
   retrieveCategoryNames();});
+  
 </script>
 
 <template>
@@ -285,5 +311,8 @@ onMounted(() => {
         </v-card>
       </v-dialog>
     </v-container>
+
+<NotificationSender ref="notificationSender" />
+
   </div>
 </template>
