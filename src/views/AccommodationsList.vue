@@ -53,6 +53,7 @@ watchEffect(() => {
             <tr>
               <th class="text-left">User Accommodation ID</th>
               <th class="text-left">Category</th>
+              <th class="text-left">Title</th>
               <th class="text-left">User ID</th>
               <th class="text-left">Name</th>
             </tr>
@@ -61,6 +62,7 @@ watchEffect(() => {
             <tr v-for="(item, index) in userAccommodations" :key="item.id">
               <td>{{ item.id }}</td>
               <td>{{ item.accommodationCategory?.categoryName }}</td>
+              <td>{{ item.accommodation?.title }}</td>
               <td>{{ item.userId }}</td>
               <td>{{ item.user?.fName }} {{ item.user?.lName }}</td>
             </tr>

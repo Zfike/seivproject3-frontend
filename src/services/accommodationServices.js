@@ -4,15 +4,15 @@ export default {
   getAll() {
     return apiClient.get("/accommodations");
   },
-  // getAllForUser(userId) {
-  //   return apiClient.get("/accommodations/userTut/" + userId);
-  // },
+  getAllForUser(userId) {
+    return apiClient.get(`/accommodations/user/${userId}`);
+  }, 
   get(id) {
     return apiClient.get(`/accommodations/${id}`);
-  },
+  },  
   create(data) {
-    return apiClient.post("/accommodations", data);
-  },
+    return apiClient.post('/accommodations', data);
+  },  
   update(id, data) {
     return apiClient.put(`/accommodations/${id}`, data);
   },
@@ -22,7 +22,8 @@ export default {
   deleteAll() {
     return apiClient.delete(`/accommodations`);
   },
-  findByTitle(title) {
-    return apiClient.get(`/accommodations?title=${title}`);
+  // Fetch all accommodations by accommodationCategoryId
+  getAllByCategoryId(accommodationCategoryId) {
+    return apiClient.get(`/accommodations/category/${accommodationCategoryId}`);
   },
 };

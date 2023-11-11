@@ -2,19 +2,26 @@
 import UserAccommodationRequestServices from "../services/userAccommodationRequestServices";
 import UserAccommodationServices from "../services/userAccommodationServices";
 import AccommodationCategoryServices from "../services/accommodationCategoryServices";
+import AccommodationServices from "../services/accommodationServices";
 import NotificationSender from "../components/NotificationSender.vue";
 import Utils from "../config/utils.js";
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userAccommodationRequest = ref({});
 const accommodationCategories = ref([]);
-const selectedCategories = ref([]);
+const accommodations = ref([]);
+const filteredAccommodations = ref([]);
+const selectedAccommodations = ref([]);
+const selectedCategory = ref(null);
+const notificationSender = ref(null);
 const user = Utils.getStore("user");
 const message = ref("View and approve accommodations");
+const dialogMessage = ref("Are you sure you want to proceed with the approval of the selected accommodation(s)?");
 const approveDialog = ref(false);
 const declineDialog = ref(false);
+
 
 const props = defineProps({
   id: {
@@ -32,14 +39,50 @@ const retrieveUserAccommodationRequests = () => {
     });
 };
 
-const retrieveAccommodationCategories = () => {
-  AccommodationCategoryServices.getAll()
-    .then((response) => {
-      accommodationCategories.value = response.data;
-    })
-    .catch((e) => {
-      message.value = e.response.data.message;
-    });
+// Function to retrieve accommodations based on the selected category name
+const retrieveAccommodations = async () => {
+  if (!selectedCategory.value) {
+    filteredAccommodations.value = [];
+    return;
+  }
+
+  try {
+    // First, get the category ID by the category name
+    const categoryResponse = await AccommodationCategoryServices.getByCategoryName(selectedCategory.value);
+    const categoryId = categoryResponse.data.length > 0 ? categoryResponse.data[0].id : null;
+
+    if (!categoryId) {
+      throw new Error(`Category with name ${selectedCategory.value} not found.`);
+    }
+
+    // Then, get accommodations by the category ID
+    const accommodationsResponse = await AccommodationServices.getAllByCategoryId(categoryId);
+    filteredAccommodations.value = accommodationsResponse.data;
+  } catch (error) {
+    console.error(error);
+    message.value = "Failed to load accommodations for the selected category.";
+  }
+};
+
+// Add a method to toggle accommodation selection
+const toggleAccommodationSelection = (accommodationId) => {
+  const index = selectedAccommodations.value.indexOf(accommodationId);
+  if (index > -1) {
+    selectedAccommodations.value.splice(index, 1); // Remove if already selected
+  } else {
+    selectedAccommodations.value.push(accommodationId); // Add if not selected
+  }
+};
+
+// Function to retrieve accommodation categories and extract their names
+const retrieveCategoryNames = async () => {
+  try {
+    const response = await AccommodationCategoryServices.getAll();
+    accommodationCategories.value = response.data.map(category => category.categoryName);
+  } catch (error) {
+    console.error(error);
+    message.value = "Failed to load categories.";
+  }
 };
 
 const toggleCategorySelection = (categoryId) => {
@@ -52,67 +95,115 @@ const toggleCategorySelection = (categoryId) => {
 };
 
 const updateStatus = (newStatus) => {
-  UserAccommodationRequestServices.update(userAccommodationRequest.value.id, { status: newStatus })
+  return UserAccommodationRequestServices.update(userAccommodationRequest.value.id, { status: newStatus })
     .then(() => {
       message.value = `Accommodation has been ${newStatus}.`;
-      retrieveUserAccommodationRequests(); // Refresh the accommodation data
+      return retrieveUserAccommodationRequests(); // Return this promise if it's async
     })
     .catch((e) => {
       message.value = e.response.data.message || `Failed to update accommodation status to ${newStatus}.`;
+      throw e; // Re-throw the error to be caught by the caller
     });
 };
 
+const resetDialogMessage = () => {
+  dialogMessage.value = "Are you sure you want to proceed with the approval of the selected accommodation(s)?";
+};
+
 const confirmApprove = () => {
-  if (selectedCategories.value.length === 0) {
-    message.value = "No accommodation categories selected.";
+  // Check if any accommodations have been selected
+  if (selectedAccommodations.value.length === 0) {
+    message.value = "No accommodations selected.";
+    dialogMessage.value = "No accommodations have been selected for approval.";
     return;
   }
   
 
   // Wrap the creation of user accommodations in a Promise.all to handle them concurrently
-  Promise.all(selectedCategories.value.map(categoryId => {
+  Promise.all(selectedAccommodations.value.map(accommodationId => {
+    // Find the accommodation by ID to get the corresponding category ID
+    const accommodation = filteredAccommodations.value.find(acc => acc.id === accommodationId);
+    if (!accommodation || !accommodation.accommodationCategoryId) {
+      throw new Error('Accommodation not found or missing category ID');
+    }
+    
+    // Construct the accommodation data for each selected accommodation
     const accommodationData = {
-      ...userAccommodationRequest.value,
-      accommodationCategoryId: categoryId,
-      userAccommodationRequestId: userAccommodationRequest.value.id
+      userId: userAccommodationRequest.value.userId,
+      userAccommodationRequestId: userAccommodationRequest.value.id,
+      description: userAccommodationRequest.value.description,
+      permission: userAccommodationRequest.value.permission,
+      accommodationCategoryId: accommodation.accommodationCategoryId, // Make sure this is the correct property
+      accommodationId: accommodationId,
+      // Include any other necessary data here
     };
-    // Remove properties that are not required or should not be copied directly
-    delete accommodationData.id;
-    delete accommodationData.status;
-    delete accommodationData.user;
 
+    // Call your API to create a UserAccommodation for each selected accommodation
     return UserAccommodationServices.create(accommodationData);
   }))
   .then(() => {
+    // After successfully creating accommodations, update the request status to 'Approved'
+    return updateStatus('Approved');
+  })
+  .then(() => {
+    // Handle the successful approval
+    message.value = "The accommodation request has been approved and accommodations have been created.";
+    approveDialog.value = false;
+    selectedAccommodations.value = []; // Clear the selected accommodations
+    
+    //Send approval email
     if (notificationSender.value) {
       notificationSender.value.sendEmail({
         from: user.email,
-        to: userAccommodationRequest.userId.email,
+        to: userAccommodationRequest.value.user?.email,
       }, 'approve');
     } else {
       console.error('NotificationSender component not referenced properly.');
     }
 
-    message.value = "All accommodations have been approved.";
-    updateStatus('approved');
-    approveDialog.value = false;
-    retrieveUserAccommodationRequests();
+    retrieveUserAccommodationRequests(); // Refresh the request data
   })
   .catch((error) => {
     console.error(error);
-    message.value = "Failed to approve accommodations.";
+    message.value = "Failed to approve the accommodation request.";
   });
 };
 
 const confirmDecline = () => {
-  updateStatus('declined');
-  declineDialog.value = false;
+  updateStatus('Declined')
+    .then(() => {
+      // After updating the status, close the dialog and clear any potentially selected accommodations
+      declineDialog.value = false;
+      selectedAccommodations.value = [];
+
+      //Send denial email
+      if (notificationSender.value) {
+        notificationSender.value.sendEmail({
+          from: user.email,
+          to: userAccommodationRequest.value.user?.email,
+        }, 'deny');
+      } else {
+        console.error('NotificationSender component not referenced properly.');
+      }
+    })
+    .catch((error) => {
+      // Handle any errors here
+      console.error(error);
+      message.value = "Failed to decline the accommodation request.";
+    });
 };
+
+// Watcher to react to changes in the selected category
+watch(selectedCategory, (newCategory) => {
+  if (newCategory) {
+    retrieveAccommodations();
+  }
+});
 
 onMounted(() => {
   retrieveUserAccommodationRequests();
-  retrieveAccommodationCategories();
-});
+  retrieveCategoryNames();});
+  
 </script>
 
 <template>
@@ -131,7 +222,6 @@ onMounted(() => {
           <thead>
             <tr>
               <th class="text-left">Request ID</th>
-              <!-- <th class="text-left">Category</th> -->
               <th class="text-left">User ID</th>
               <th class="text-left">Name</th>
               <th class="text-left">Description</th>
@@ -141,7 +231,6 @@ onMounted(() => {
           <tbody>
             <tr>
               <td>{{ userAccommodationRequest.id }}</td>
-              <!-- <td>{{ userAccommodation.accommodationCategory?.categoryName }}</td> -->
               <td>{{ userAccommodationRequest.userId }}</td>
               <td>{{ userAccommodationRequest.user?.fName }} {{ userAccommodationRequest.user?.lName }}</td>
               <td>{{ userAccommodationRequest.description }}</td>
@@ -150,58 +239,80 @@ onMounted(() => {
           </tbody>
         </v-table>
       </v-card>
+
+      <!-- Filter Accommodations by Category -->
+      <v-card>
+        <v-card-title>Filter Accommodations by Category</v-card-title>
+        <v-card-text>
+          <v-select
+            v-model="selectedCategory"
+            :items="accommodationCategories"
+            label="Select Category"
+            @change="retrieveAccommodations"
+          ></v-select>
+        </v-card-text>
+      </v-card>
+
+      <!-- List Accommodations with Checkboxes based on the selected Category -->
       <v-card>
         <v-card-title>Add Accommodations</v-card-title>
         <v-card-text>
           <v-row>
             <v-col
-              v-for="(category, index) in accommodationCategories" :key="category.id"
+              v-for="accommodation in filteredAccommodations"
+              :key="accommodation.id"
               cols="12"
               sm="6"
               md="4"
             >
               <v-checkbox
-                :label="category.categoryName"
-                :value="category.id"
-                :input-value="selectedCategories.includes(category.id)"
-                @change="toggleCategorySelection(category.id)"
+                :label="accommodation.title"
+                :value="accommodation.id"
+                :input-value="selectedAccommodations.includes(accommodation.id)"
+                @change="toggleAccommodationSelection(accommodation.id)"
               ></v-checkbox>
             </v-col>
           </v-row>
         </v-card-text>
-        <v-row justify="center" class="my-4">
-          <v-col cols="12" class="text-center">
-            <v-btn color="green" @click="approveDialog = true" class="mx-4" small>Approve</v-btn>
-            <v-btn color="red" @click="declineDialog = true" class="mx-4" small>Decline</v-btn>
-          </v-col>
-        </v-row>
       </v-card>
+
+
+      <!-- Approval and Decline Actions -->
+      <v-card>
+        <v-card-text class="text-center">
+          <v-btn color="green" @click="approveDialog = true" class="mx-4" small>Approve</v-btn>
+          <v-btn color="red" @click="declineDialog = true" class="mx-4" small>Decline</v-btn>
+        </v-card-text>
+      </v-card>
+
+      <!-- Decline Confirmation Dialog -->
+      <v-dialog v-model="declineDialog" persistent max-width="300px">
+        <v-card>
+          <v-card-title class="text-h5">Confirm Decline</v-card-title>
+          <v-card-text>Are you sure you want to decline this accommodation request?</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="declineDialog = false">Cancel</v-btn>
+            <v-btn color="red" text @click="confirmDecline">Decline</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <!-- Approve Confirmation Dialog -->
+      <v-dialog v-model="approveDialog" persistent max-width="300px">
+        <v-card>
+          <v-card-title class="text-h5">Confirm Approval</v-card-title>
+          <v-card-text>{{ dialogMessage }}</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="approveDialog = false; resetDialogMessage()">Cancel</v-btn>
+            <v-btn color="green" text @click="confirmApprove">Approve</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
 
-    <!-- Approve Confirmation Dialog -->
-    <v-dialog v-model="approveDialog" persistent max-width="300px">
-      <v-card>
-        <v-card-title class="text-h5">Confirm Approval</v-card-title>
-        <v-card-text>Are you sure you want to approve this accommodation?</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="approveDialog = false">Cancel</v-btn>
-          <v-btn color="green" text @click="confirmApprove">Approve</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+<NotificationSender ref="notificationSender" />
 
-    <!-- Decline Confirmation Dialog -->
-    <v-dialog v-model="declineDialog" persistent max-width="300px">
-      <v-card>
-        <v-card-title class="text-h5">Confirm Decline</v-card-title>
-        <v-card-text>Are you sure you want to decline this accommodation?</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="declineDialog = false">Cancel</v-btn>
-          <v-btn color="red" text @click="confirmDecline">Decline</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>

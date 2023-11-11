@@ -9,6 +9,7 @@ export default {
   methods: {
     async sendEmail(emailDetails, type) {
       try {
+        // console.log('Email details:', emailDetails)
         const response = await axios.post(`${apiBaseUrl}/accommodations-t1/sendEmail/${type}`, emailDetails);
         console.log('Email sent successfully:', response.data);
       } catch (error) {
