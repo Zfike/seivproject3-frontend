@@ -8,4 +8,19 @@ export default {
   getByCategoryName(categoryName) {
     return apiClient.get(`/accommodationCategories?categoryName=${categoryName}`);
   },
+  get(id) {
+    return apiClient.get(`/accommodationCategories/${id}`);
+  },  
+  create(data) {
+    return apiClient.post('/accommodationCategories', data);
+  },  
+  update(id, data) {
+    return apiClient.put(`/accommodationCategories/${id}`, data);
+  },
+  delete(id) {
+    return apiClient.delete(`/accommodationCategories/${id}`);
+  },
+  deleteAll() {
+    return apiClient.delete(`/accommodationCategories`);
+  },
 };
