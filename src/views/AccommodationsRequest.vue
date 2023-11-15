@@ -3,6 +3,7 @@ import AccommodationCategoryServices from "../services/accommodationCategoryServ
 import UserAccommodationRequestServices from "../services/userAccommodationRequestServices";
 import Utils from "../config/utils.js";
 import NotificationSender from "../components/NotificationSender.vue";
+import SemesterServices from "../services/semesterServices";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -15,6 +16,17 @@ const showDialog = ref(false);
 const currentCategory = ref({});
 const requestDescription = ref("");
 const notificationSender = ref(null);
+const semesters = ref([]);
+const selectedSemesterId = ref(null);
+
+const retrieveSemesters = async () => {
+  try {
+    const response = await SemesterServices.getAll();
+    semesters.value = response.data;
+  } catch (e) {
+    message.value = e.response.data.message;
+  }
+};
 
 const retrieveAccommodationCategories = () => {
   AccommodationCategoryServices.getAll()
@@ -27,11 +39,17 @@ const retrieveAccommodationCategories = () => {
 };
 
 const submitRequest = async () => {
+  if (!selectedSemesterId.value || !selectedSemesterId.value.id) {
+    requestMessage.value = "Please select a semester.";
+    return;
+  }
+
   // Create the accommodation request
   const newRequest = {
     userId: user.userId,
     permission: 1,
     description: requestDescription.value,
+    semesterId: selectedSemesterId.value.id,
   };
 
   try {
@@ -54,6 +72,7 @@ const submitRequest = async () => {
 };
 
 retrieveAccommodationCategories();
+retrieveSemesters();
 </script>
 
 <template>
@@ -94,6 +113,17 @@ retrieveAccommodationCategories();
           <b>{{ requestMessage }}</b>
         </v-card-text>
         <v-card-text>
+          <!-- Semester Selection Dropdown -->
+          <v-select
+            label="Select Semester"
+            :items="semesters"
+            item-text="title"
+            item-value="id"
+            v-model="selectedSemesterId"
+            return-object
+            required
+          ></v-select>
+          <!-- Request Description -->
           <v-textarea
             label="Request Description"
             v-model="requestDescription"

@@ -73,7 +73,8 @@ onMounted(() => {
         <v-btn class="mx-2" v-else :to="{ name: 'accommodationsList' }"> Accommodations </v-btn>
         
         <!-- Different Accommodation button for admin -->
-        <v-btn class="mx-2" v-if="!(store.getters.isAdmin)" :to="{ name: 'requestList' }"> Requests </v-btn>
+        <v-btn class="mx-2" v-if="store.getters.isAdmin" :to="{ name: 'manage' }"> Manage </v-btn>
+        <v-btn class="mx-2" v-else :to="{ name: 'requestList' }"> Requests </v-btn>
 
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">

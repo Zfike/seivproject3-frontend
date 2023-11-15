@@ -50,7 +50,7 @@ retrieveUserAccommodationRequests();
           <thead>
             <tr>
               <th class="text-left">Request ID</th>
-              <th class="text-left">User ID</th>
+              <th class="text-left">Semester</th>
               <th class="text-left">Name</th>
               <th class="text-left">Status</th>
               <th class="text-left">View</th>
@@ -59,7 +59,7 @@ retrieveUserAccommodationRequests();
           <tbody>
             <tr v-for="(item, index) in userAccommodationRequests" :key="item.id">
               <td>{{ item.id }}</td>
-              <td>{{ item.userId }}</td>
+              <td>{{ item.semester.title }}</td>
               <td>{{ item.user.fName }} {{ item.user.lName }}</td>
               <td>{{ item.status }}</td>
               <td>
