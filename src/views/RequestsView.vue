@@ -5,7 +5,7 @@ import AccommodationCategoryServices from "../services/accommodationCategoryServ
 import AccommodationServices from "../services/accommodationServices";
 import NotificationSender from "../components/NotificationSender.vue";
 import Utils from "../config/utils.js";
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, watchEffect, computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -21,7 +21,7 @@ const message = ref("View and approve accommodations");
 const dialogMessage = ref("Are you sure you want to proceed with the approval of the selected accommodation(s)?");
 const approveDialog = ref(false);
 const declineDialog = ref(false);
-
+const isApprovalProcessCompleted = ref(false);
 
 const props = defineProps({
   id: {
@@ -110,14 +110,18 @@ const resetDialogMessage = () => {
   dialogMessage.value = "Are you sure you want to proceed with the approval of the selected accommodation(s)?";
 };
 
+const isApproveButtonDisabled = computed(() => {
+  return selectedAccommodations.value.length === 0;
+});
+
 const confirmApprove = () => {
-  // Check if any accommodations have been selected
-  if (selectedAccommodations.value.length === 0) {
-    message.value = "No accommodations selected.";
-    dialogMessage.value = "No accommodations have been selected for approval.";
+  if (!selectedAccommodations.value || selectedAccommodations.value.length === 0) {
+    dialogMessage.value = "No accommodations selected. Please select accommodations before proceeding.";
+    console.error("No accommodations selected.");
     return;
   }
-  
+
+  isApprovalProcessCompleted.value = true;
 
   // Wrap the creation of user accommodations in a Promise.all to handle them concurrently
   Promise.all(selectedAccommodations.value.map(accommodationId => {
@@ -133,9 +137,9 @@ const confirmApprove = () => {
       userAccommodationRequestId: userAccommodationRequest.value.id,
       description: userAccommodationRequest.value.description,
       permission: userAccommodationRequest.value.permission,
-      accommodationCategoryId: accommodation.accommodationCategoryId, // Make sure this is the correct property
+      semesterId: userAccommodationRequest.value.semesterId,
+      accommodationCategoryId: accommodation.accommodationCategoryId,
       accommodationId: accommodationId,
-      // Include any other necessary data here
     };
 
     // Call your API to create a UserAccommodation for each selected accommodation
@@ -165,7 +169,7 @@ const confirmApprove = () => {
   })
   .catch((error) => {
     console.error(error);
-    message.value = "Failed to approve the accommodation request.";
+    message.value = "Failed to approve the accommodation request. " + error.message;
   });
 };
 
@@ -200,6 +204,21 @@ watch(selectedCategory, (newCategory) => {
   }
 });
 
+watchEffect(() => {
+  if (isApprovalProcessCompleted.value) return;
+
+  if (!selectedCategory.value) {
+    message.value = "No category selected. Please select a category.";
+    dialogMessage.value = "No category selected. Please select a category before proceeding.";
+  } else if (!selectedAccommodations.value || selectedAccommodations.value.length === 0) {
+    message.value = "No accommodations selected. Please select accommodations.";
+    dialogMessage.value = "No accommodations selected. Please select accommodations before proceeding.";
+  } else {
+    message.value = "Approve or Decline Accommodation Requests";
+    dialogMessage.value = "Are you sure you want to proceed with the approval of the selected accommodations?";
+  }
+});
+
 onMounted(() => {
   retrieveUserAccommodationRequests();
   retrieveCategoryNames();});
@@ -222,7 +241,7 @@ onMounted(() => {
           <thead>
             <tr>
               <th class="text-left">Request ID</th>
-              <th class="text-left">User ID</th>
+              <th class="text-left">Semester</th>
               <th class="text-left">Name</th>
               <th class="text-left">Description</th>
               <th class="text-left">Status</th>
@@ -231,7 +250,7 @@ onMounted(() => {
           <tbody>
             <tr>
               <td>{{ userAccommodationRequest.id }}</td>
-              <td>{{ userAccommodationRequest.userId }}</td>
+              <td>{{ userAccommodationRequest.semester?.title }}</td> <!-- Corrected this line -->
               <td>{{ userAccommodationRequest.user?.fName }} {{ userAccommodationRequest.user?.lName }}</td>
               <td>{{ userAccommodationRequest.description }}</td>
               <td>{{ userAccommodationRequest.status }}</td>
@@ -306,7 +325,15 @@ onMounted(() => {
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn text @click="approveDialog = false; resetDialogMessage()">Cancel</v-btn>
-            <v-btn color="green" text @click="confirmApprove">Approve</v-btn>
+            <v-btn
+              color="green"
+              @click="confirmApprove"
+              :disabled="isApproveButtonDisabled"
+              class="mx-4"
+              small
+            >
+              Approve
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

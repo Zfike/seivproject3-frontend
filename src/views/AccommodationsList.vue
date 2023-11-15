@@ -30,7 +30,7 @@ retrieveUserAccommodations();
 watchEffect(() => {
   message.value = userAccommodations.value.length === 0
     ? "You currently have no accommodations. Please request for one."
-    : "Current Accommodations";
+    : "Your Accommodations";
 });
 </script>
 
@@ -51,10 +51,10 @@ watchEffect(() => {
         <v-table v-if="userAccommodations.length > 0">
           <thead>
             <tr>
-              <th class="text-left">User Accommodation ID</th>
+              <th class="text-left">ID</th>
               <th class="text-left">Category</th>
               <th class="text-left">Title</th>
-              <th class="text-left">User ID</th>
+              <th class="text-left">Semester</th>
               <th class="text-left">Name</th>
             </tr>
           </thead>
@@ -63,7 +63,7 @@ watchEffect(() => {
               <td>{{ item.id }}</td>
               <td>{{ item.accommodationCategory?.categoryName }}</td>
               <td>{{ item.accommodation?.title }}</td>
-              <td>{{ item.userId }}</td>
+              <td>{{ item.semester?.title }}</td>
               <td>{{ item.user?.fName }} {{ item.user?.lName }}</td>
             </tr>
           </tbody>
