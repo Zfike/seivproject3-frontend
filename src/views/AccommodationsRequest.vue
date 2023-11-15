@@ -58,11 +58,23 @@ const submitRequest = async () => {
     showDialog.value = false;
     // requestDescription.value = "";
 
+        // Fetch user details for email content
+      const userDetails = {
+      fName: user.fName,
+      lName: user.lName,
+      email: user.email,
+    };
+
     // After successful submission, call the sendEmail method on NotificationSender
     if (notificationSender.value) {
       notificationSender.value.sendEmail({
-        to: user.email,
+        to: userDetails.email,
       }, 'confirm');
+      notificationSender.value.sendEmail({
+        to: userDetails.email,
+        fName: userDetails.fName,
+        lName: userDetails.lName,
+      }, 'notify');
     } else {
       console.error('NotificationSender component not referenced properly.');
     }
